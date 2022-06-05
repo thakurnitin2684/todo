@@ -69,27 +69,31 @@ app.get("/:customListName", function (req, res) {
   // we get the name of list from the lists.ejs
   const customListName = _.capitalize(req.params.customListName);
 
-  // if there is already a list with such name then we  just render the list otherwise create new
-  List.findOne({ name: customListName }, function (err, foundList) {
-    if (!err) {
-      if (!foundList) {
-        //console.log("doesn't exist");
-        const list = new List({
-          name: customListName,
-          items: defaultItems,
-        });
+  if (customListName === "About") {
+    res.render("about");
+  } else {
+    // if there is already a list with such name then we  just render the list otherwise create new
+    List.findOne({ name: customListName }, function (err, foundList) {
+      if (!err) {
+        if (!foundList) {
+          //console.log("doesn't exist");
+          const list = new List({
+            name: customListName,
+            items: defaultItems,
+          });
 
-        list.save();
-        res.redirect("/" + customListName);
-      } else {
-        //Show an existing list
-        res.render("list", {
-          listTitle: foundList.name,
-          newListItems: foundList.items,
-        });
+          list.save();
+          res.redirect("/" + customListName);
+        } else {
+          //Show an existing list
+          res.render("list", {
+            listTitle: foundList.name,
+            newListItems: foundList.items,
+          });
+        }
       }
-    }
-  });
+    });
+  }
 });
 
 //post route for every list
